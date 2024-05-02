@@ -25,6 +25,12 @@ param apimName string = 'apim-${appSuffix}'
 @description('The name applied to the Key Vault')
 param keyVaultName string = 'kv-${appSuffix}'
 
+@description('The email address for APIM')
+param publishEmailAddress string
+
+@description('The name of the publisher for APIM')
+param publisherName string
+
 var tags = {
   Environment: 'Prod'
   Application: 'Serverless-on-Container-Apps'
@@ -84,8 +90,8 @@ module apim 'core/gateway/apim.bicep' = {
     apimName: apimName 
     appInsightsName: appInsights.outputs.name
     location: location
-    publisherEmail: 'willvelida@hotmail.co.uk'
-    publisherName: 'Will Velida'
+    publisherEmail: publishEmailAddress
+    publisherName: publisherName
     tags: tags
   }
 }
