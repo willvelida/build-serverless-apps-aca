@@ -76,6 +76,10 @@ module env 'core/host/containerAppEnvironment.bicep' = {
     logAnalyticsName: logAnalytics.outputs.name 
     tags: tags
   }
+  dependsOn: [
+    serviceBus
+    cosmosDb
+  ]
 }
 
 module apim 'core/gateway/apim.bicep' = {
