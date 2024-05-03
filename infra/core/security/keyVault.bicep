@@ -20,8 +20,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
     accessPolicies: []
     enableRbacAuthorization: true
     enabledForTemplateDeployment: true
-    enableSoftDelete: true
-    softDeleteRetentionInDays: 7
+    enableSoftDelete: false
   }
 }
 

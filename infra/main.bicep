@@ -16,23 +16,14 @@ param containerAppEnvName string = 'env-${appSuffix}'
 @description('The name of the Container Registry')
 param containerRegistryName string = 'acr${appSuffix}'
 
-@description('The name applied to the APIM instance')
-param apimName string = 'apim-${appSuffix}'
-
 @description('The name applied to the Key Vault')
-param keyVaultName string = 'kv-${appSuffix}'
+param keyVaultName string = 'kv${appSuffix}'
 
 @description('The name applied to the Service Bus namespace')
 param serviceBusName string = 'sb-${appSuffix}'
 
 @description('The name of the Cosmos DB account')
 param cosmosDbAccountName string = 'db-${appSuffix}'
-
-@description('The email address for APIM')
-param publisherEmailAddress string
-
-@description('The name of the publisher for APIM')
-param publisherName string
 
 var tags = {
   Environment: 'Prod'
@@ -80,18 +71,6 @@ module env 'core/host/containerAppEnvironment.bicep' = {
     serviceBus
     cosmosDb
   ]
-}
-
-module apim 'core/gateway/apim.bicep' = {
-  name: 'apim'
-  params: {
-    apimName: apimName 
-    appInsightsName: appInsights.outputs.name
-    location: location
-    publisherEmail: publisherEmailAddress
-    publisherName: publisherName
-    tags: tags
-  }
 }
 
 module keyVault 'core/security/keyVault.bicep' = {

@@ -31,7 +31,7 @@ resource containerAppEnvironment 'Microsoft.App/managedEnvironments@2023-11-02-p
       destination: 'log-analytics'
       logAnalyticsConfiguration: {
         customerId: logAnalytics.properties.customerId
-        sharedKey: logAnalytics.listKeys().primarySharedKeys
+        sharedKey: logAnalytics.listKeys().primarySharedKey
       }
     }
   }

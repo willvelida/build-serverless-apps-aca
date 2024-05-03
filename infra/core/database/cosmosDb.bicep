@@ -4,7 +4,7 @@ param cosmosAccountName string
 @description('The location that the Cosmos DB account will be deployed to')
 param location string
 
-@description('The amount of throughput to apply to the database. Default is 400')
+@description('The amount of throughput to apply to the container. Default is 400')
 param throughtput int = 400
 
 @description('The tags that will be applied to the Cosmos DB account')
@@ -47,9 +47,6 @@ resource database 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2024-02-15
     resource: {
       id: databaseName
     }
-    options: {
-      throughput: throughtput
-    }
   }
 }
 
@@ -73,6 +70,9 @@ resource container 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/container
           }
         ]
       }
+    }
+    options: {
+      throughput: throughtput
     }
   }
 }
