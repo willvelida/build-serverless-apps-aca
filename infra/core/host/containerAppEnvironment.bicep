@@ -37,5 +37,8 @@ resource containerAppEnvironment 'Microsoft.App/managedEnvironments@2023-11-02-p
   }
 }
 
+@description('The name of the Container App Environment')
+output containerAppEnvName string = containerAppEnvironment.name
+
 @description('The resource Id of the Container App Environment')
 output containerAppEnvId string = containerAppEnvironment.id

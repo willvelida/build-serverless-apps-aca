@@ -16,14 +16,17 @@ param containerAppEnvName string = 'env-${appSuffix}'
 @description('The name of the Container Registry')
 param containerRegistryName string = 'acr${appSuffix}'
 
-@description('The name applied to the Storage Account')
-param storageAccountName string = 'stor${appSuffix}'
-
 @description('The name applied to the APIM instance')
 param apimName string = 'apim-${appSuffix}'
 
 @description('The name applied to the Key Vault')
 param keyVaultName string = 'kv-${appSuffix}'
+
+@description('The name applied to the Service Bus namespace')
+param serviceBusName string = 'sb-${appSuffix}'
+
+@description('The name of the Cosmos DB account')
+param cosmosDbAccountName string = 'db-${appSuffix}'
 
 @description('The email address for APIM')
 param publishEmailAddress string
@@ -75,15 +78,6 @@ module env 'core/host/containerAppEnvironment.bicep' = {
   }
 }
 
-module storageAccount 'core//storage/storageAccount.bicep' = {
-  name: 'storage'
-  params: {
-    location: location
-    storageAccountName: storageAccountName
-    tags: tags
-  }
-}
-
 module apim 'core/gateway/apim.bicep' = {
   name: 'apim'
   params: {
@@ -101,6 +95,50 @@ module keyVault 'core/security/keyVault.bicep' = {
   params: {
     keyVaultName: keyVaultName 
     location: location
+    tags: tags
+  }
+}
+
+module serviceBus 'core/messaging/serviceBus.bicep' = {
+  name: 'sb'
+  params: {
+    location: location 
+    serviceBusName: serviceBusName 
+    tags: tags
+    keyVaultName: keyVault.outputs.name
+  }
+}
+
+module cosmosDb 'core/database/cosmosDb.bicep' = {
+  name: 'cosmos'
+  params: {
+    cosmosAccountName: cosmosDbAccountName
+    location: location
+    tags: tags
+  }
+}
+
+module frontend 'apps/frontend/frontend.bicep' = {
+  name: 'frontend'
+  params: {
+    containerAppEnvName: env.outputs.containerAppEnvName 
+    containerRegistryName: containerRegistry.outputs.name
+    location: location
+    tags: tags
+  }
+}
+
+module orderprocess 'apps/order-processor/orderprocessor.bicep' = {
+  name: 'orderprocessor'
+  params: {
+    containerAppEnvName: env.outputs.containerAppEnvName 
+    containerRegistryName: containerRegistry.outputs.name
+    keyVaultName: keyVault.outputs.name
+    location: location
+    serviceBusName: serviceBus.outputs.name
+    cosmosDbName: cosmosDb.outputs.name
+    databaseName: cosmosDb.outputs.dbName
+    containerName: cosmosDb.outputs.containerName
     tags: tags
   }
 }
