@@ -19,12 +19,6 @@ param serviceBusName string
 @description('The name of the Cosmos DB account that this Container App will use for State Store')
 param cosmosDbName string
 
-@description('The name of the Cosmos DB database that this Container App will use')
-param databaseName string
-
-@description('The name of the Cosmos DB container that this Container App will use')
-param containerName string
-
 @description('The tags that will be applied to the Container App')
 param tags object
 
@@ -51,57 +45,6 @@ resource serviceBus 'Microsoft.ServiceBus/namespaces@2022-10-01-preview' existin
 
 resource cosmosDb 'Microsoft.DocumentDB/databaseAccounts@2024-02-15-preview' existing = {
   name: cosmosDbName
-}
-
-resource sbDaprComponent 'Microsoft.App/managedEnvironments/daprComponents@2023-11-02-preview' = {
-  name: 'pubsub'
-  parent: containerAppEnv
-  properties: {
-    componentType: 'pubsub.azure.servicebus.topics'
-    version: 'v1'
-    ignoreErrors: false
-    metadata: [
-      {
-        name: 'namespaceName'
-        value: serviceBus.properties.serviceBusEndpoint
-      }
-      {
-        name: 'azureClientId'
-        value: orderprocessor.identity.principalId
-      }
-    ]
-    scopes: [
-      orderprocessor.name
-    ]
-  }
-}
-
-resource cosmosDaprComponent 'Microsoft.App/managedEnvironments/daprComponents@2023-11-02-preview' = {
-  name: 'state-store'
-  parent: containerAppEnv
-  properties: {
-    componentType: 'state.azure.cosmosdb'
-    version: 'v1'
-    ignoreErrors: false
-    metadata: [
-      {
-        name: 'url'
-        value: cosmosDb.properties.documentEndpoint
-      }
-      {
-        name: 'database'
-        value: databaseName
-      }
-      {
-        name: 'collection'
-        value: containerName
-      }
-      {
-        name: 'azureClientId'
-        value: orderprocessor.identity.principalId
-      }
-    ]
-  }
 }
 
 resource orderprocessor 'Microsoft.App/containerApps@2023-11-02-preview' = {
