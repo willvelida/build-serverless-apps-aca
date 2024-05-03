@@ -29,7 +29,7 @@ param serviceBusName string = 'sb-${appSuffix}'
 param cosmosDbAccountName string = 'db-${appSuffix}'
 
 @description('The email address for APIM')
-param publishEmailAddress string
+param publisherEmailAddress string
 
 @description('The name of the publisher for APIM')
 param publisherName string
@@ -84,7 +84,7 @@ module apim 'core/gateway/apim.bicep' = {
     apimName: apimName 
     appInsightsName: appInsights.outputs.name
     location: location
-    publisherEmail: publishEmailAddress
+    publisherEmail: publisherEmailAddress
     publisherName: publisherName
     tags: tags
   }
