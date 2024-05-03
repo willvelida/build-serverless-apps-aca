@@ -120,8 +120,6 @@ module orderprocess 'apps/order-processor/orderprocessor.bicep' = {
     location: location
     serviceBusName: serviceBus.outputs.name
     cosmosDbName: cosmosDb.outputs.name
-    databaseName: cosmosDb.outputs.dbName
-    containerName: cosmosDb.outputs.containerName
     tags: tags
   }
 }
