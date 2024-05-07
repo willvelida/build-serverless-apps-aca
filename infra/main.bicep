@@ -25,12 +25,33 @@ param serviceBusName string = 'sb-${appSuffix}'
 @description('The name of the Cosmos DB account')
 param cosmosDbAccountName string = 'db-${appSuffix}'
 
+@description('The name of the APIM instance that will be deployed')
+param apimName string = 'api-${appSuffix}'
+
+@description('The Publisher Name')
+param publisherName string
+
+@description('The Publisher Email')
+param publisherEmail string
+
 var tags = {
   Environment: 'Prod'
   Application: 'Serverless-on-Container-Apps'
 }
 
-module logAnalytics 'core//monitor/logAnalytics.bicep' = {
+module apim 'core/gateway/apim.bicep' = {
+  name: 'apim'
+  params: {
+    apimName: apimName
+    appInsightsName: appInsights.outputs.name
+    location: location
+    publisherEmail: publisherEmail
+    publisherName: publisherName
+    tags: tags
+  }
+}
+
+module logAnalytics 'core/monitor/logAnalytics.bicep' = {
   name: 'law'
   params: {
     location: location 

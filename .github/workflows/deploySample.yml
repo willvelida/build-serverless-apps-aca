@@ -37,6 +37,7 @@ jobs:
           with:
             deploymentName: ${{ github.run_number }}
             resourceGroupName: ${{ secrets.AZURE_RG_NAME }}
+            parameters: publisherEmailAddress=${{ secrets.PUBLISHER_EMAIL }} publisherName=${{ secrets.PUBLISHER_NAME }}
             template: ./infra/main.bicep
             deploymentMode: Validate
   
@@ -55,7 +56,7 @@ jobs:
           name: Run what-if
           with:
             inlineScript: |
-              az deployment group what-if --resource-group ${{ secrets.AZURE_RG_NAME }} --template-file ./infra/main.bicep
+              az deployment group what-if --resource-group ${{ secrets.AZURE_RG_NAME }} --template-file ./infra/main.bicep --parameters publisherEmailAddress=${{ secrets.PUBLISHER_EMAIL }} publisherName=${{ secrets.PUBLISHER_NAME }}
 
   
     deploy:
@@ -76,4 +77,5 @@ jobs:
           with:
             resourceGroupName: ${{ secrets.AZURE_RG_NAME }}
             template: ./infra/main.bicep
+            parameters: publisherEmailAddress=${{ secrets.PUBLISHER_EMAIL }} publisherName=${{ secrets.PUBLISHER_NAME }}
             failOnStdErr: false
