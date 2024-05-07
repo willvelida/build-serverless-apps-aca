@@ -121,3 +121,13 @@ module cosmosDb 'core/database/cosmosDb.bicep' = {
     tags: tags
   }
 }
+
+module frontend 'apps/frontend/frontend.bicep' = {
+  name: 'frontend'
+  params: {
+    containerAppEnvName: env.outputs.containerAppEnvName 
+    containerRegistryName: containerRegistry.outputs.name
+    location: location
+    tags: tags
+  }
+}

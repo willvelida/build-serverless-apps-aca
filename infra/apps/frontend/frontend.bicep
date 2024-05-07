@@ -42,7 +42,8 @@ resource frontend 'Microsoft.App/containerApps@2023-11-02-preview' = {
       enabled: true
       enableApiLogging: true
       appProtocol: 'http'
-      appPort: 3000
+      appPort: 80
+      logLevel: 'info'
     }
     registries: [
       {
