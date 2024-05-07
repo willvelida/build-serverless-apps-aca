@@ -32,7 +32,7 @@ param apimName string = 'api-${appSuffix}'
 param publisherName string
 
 @description('The Publisher Email')
-param publisherEmail string
+param publisherEmailAddress string
 
 var tags = {
   Environment: 'Prod'
@@ -45,7 +45,7 @@ module apim 'core/gateway/apim.bicep' = {
     apimName: apimName
     appInsightsName: appInsights.outputs.name
     location: location
-    publisherEmail: publisherEmail
+    publisherEmail: publisherEmailAddress
     publisherName: publisherName
     tags: tags
   }
