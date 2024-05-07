@@ -100,26 +100,3 @@ module cosmosDb 'core/database/cosmosDb.bicep' = {
     tags: tags
   }
 }
-
-module frontend 'apps/frontend/frontend.bicep' = {
-  name: 'frontend'
-  params: {
-    containerAppEnvName: env.outputs.containerAppEnvName 
-    containerRegistryName: containerRegistry.outputs.name
-    location: location
-    tags: tags
-  }
-}
-
-module orderprocess 'apps/order-processor/orderprocessor.bicep' = {
-  name: 'orderprocessor'
-  params: {
-    containerAppEnvName: env.outputs.containerAppEnvName 
-    containerRegistryName: containerRegistry.outputs.name
-    keyVaultName: keyVault.outputs.name
-    location: location
-    serviceBusName: serviceBus.outputs.name
-    cosmosDbName: cosmosDb.outputs.name
-    tags: tags
-  }
-}
