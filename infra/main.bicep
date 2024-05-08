@@ -64,6 +64,7 @@ module backendApi 'apps/backend-api/backendApi.bicep' = {
   name: 'backend-api'
   params: {
     containerAppEnvName: env.outputs.containerAppEnvName
+    containerRegistryName: containerRegistry.outputs.name
     location: location
     tags: tags
   }
