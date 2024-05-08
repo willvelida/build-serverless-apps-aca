@@ -92,6 +92,8 @@ module frontEnd 'apps/frontend/frontend.bicep' = {
   name: 'frontend'
   params: {
     containerAppEnvName: env.outputs.containerAppEnvName
+    containerRegistryName: containerRegistry.outputs.name
+    keyVaultName: keyVault.outputs.name
     location: location
     tags: tags
   }
