@@ -10,7 +10,7 @@ param keyVaultName string
 @description('The tags that will be applied to the Service Bus namespace')
 param tags object
 
-var topicName = 'orders'
+var topicName = 'tasksavedtopic'
 var sbConnectionStringSecretName = 'servicebusconnectionstring'
 
 resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = {

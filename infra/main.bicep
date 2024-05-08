@@ -5,50 +5,20 @@ param appSuffix string = uniqueString(resourceGroup().id)
 param location string = resourceGroup().location
 
 @description('The name applied to the Application Insights workspace')
-param appInsightsName string = 'appins-${appSuffix}'
+param appInsightsName string = 'appins-tm-${appSuffix}'
 
 @description('The name applied to the Log Analytics workspace.')
-param logAnalyticsName string = 'law-${appSuffix}'
+param logAnalyticsName string = 'law-tm-${appSuffix}'
 
 @description('The name of the Container App Environment')
-param containerAppEnvName string = 'env-${appSuffix}'
+param containerAppEnvName string = 'env-tm-${appSuffix}'
 
 @description('The name of the Container Registry')
-param containerRegistryName string = 'acr${appSuffix}'
-
-@description('The name applied to the Key Vault')
-param keyVaultName string = 'kv${appSuffix}'
-
-@description('The name applied to the Service Bus namespace')
-param serviceBusName string = 'sb-${appSuffix}'
-
-@description('The name of the Cosmos DB account')
-param cosmosDbAccountName string = 'db-${appSuffix}'
-
-@description('The name of the APIM instance that will be deployed')
-param apimName string = 'api-${appSuffix}'
-
-@description('The Publisher Name')
-param publisherName string
-
-@description('The Publisher Email')
-param publisherEmailAddress string
+param containerRegistryName string = 'acrtm${appSuffix}'
 
 var tags = {
   Environment: 'Prod'
-  Application: 'Serverless-on-Container-Apps'
-}
-
-module apim 'core/gateway/apim.bicep' = {
-  name: 'apim'
-  params: {
-    apimName: apimName
-    appInsightsName: appInsights.outputs.name
-    location: location
-    publisherEmail: publisherEmailAddress
-    publisherName: publisherName
-    tags: tags
-  }
+  Application: 'Task-Manager'
 }
 
 module logAnalytics 'core/monitor/logAnalytics.bicep' = {
@@ -86,48 +56,6 @@ module env 'core/host/containerAppEnvironment.bicep' = {
     containerAppEnvironmentName: containerAppEnvName 
     location: location
     logAnalyticsName: logAnalytics.outputs.name 
-    tags: tags
-  }
-  dependsOn: [
-    serviceBus
-    cosmosDb
-  ]
-}
-
-module keyVault 'core/security/keyVault.bicep' = {
-  name: 'kv'
-  params: {
-    keyVaultName: keyVaultName 
-    location: location
-    tags: tags
-  }
-}
-
-module serviceBus 'core/messaging/serviceBus.bicep' = {
-  name: 'sb'
-  params: {
-    location: location 
-    serviceBusName: serviceBusName 
-    tags: tags
-    keyVaultName: keyVault.outputs.name
-  }
-}
-
-module cosmosDb 'core/database/cosmosDb.bicep' = {
-  name: 'cosmos'
-  params: {
-    cosmosAccountName: cosmosDbAccountName
-    location: location
-    tags: tags
-  }
-}
-
-module frontend 'apps/frontend/frontend.bicep' = {
-  name: 'frontend'
-  params: {
-    containerAppEnvName: env.outputs.containerAppEnvName 
-    containerRegistryName: containerRegistry.outputs.name
-    location: location
     tags: tags
   }
 }

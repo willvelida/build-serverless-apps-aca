@@ -7,8 +7,8 @@ param location string
 @description('The tags that will be applied to the Cosmos DB account')
 param tags object
 
-var databaseName = 'ServerlessStoreDB'
-var containerName = 'orders'
+var databaseName = 'tasksmanagerdb'
+var containerName = 'taskscollection'
 
 resource account 'Microsoft.DocumentDB/databaseAccounts@2024-02-15-preview' = {
   name: cosmosAccountName

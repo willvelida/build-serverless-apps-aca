@@ -1,7 +1,5 @@
-# This is a basic workflow to help you get started with Actions
 name: Deploy Sample
 
-# Controls when the workflow will run
 on:
   workflow_dispatch:
   push:
@@ -36,8 +34,7 @@ jobs:
           name: Run preflight validation
           with:
             deploymentName: ${{ github.run_number }}
-            resourceGroupName: ${{ secrets.AZURE_RG_NAME }}
-            parameters: publisherEmailAddress=${{ secrets.PUBLISHER_EMAIL }} publisherName=${{ secrets.PUBLISHER_NAME }}
+            resourceGroupName: ${{ secrets.AZURE_RG_NAME }}           
             template: ./infra/main.bicep
             deploymentMode: Validate
   
@@ -56,7 +53,7 @@ jobs:
           name: Run what-if
           with:
             inlineScript: |
-              az deployment group what-if --resource-group ${{ secrets.AZURE_RG_NAME }} --template-file ./infra/main.bicep --parameters publisherEmailAddress=${{ secrets.PUBLISHER_EMAIL }} publisherName=${{ secrets.PUBLISHER_NAME }}
+              az deployment group what-if --resource-group ${{ secrets.AZURE_RG_NAME }} --template-file ./infra/main.bicep
 
   
     deploy:
@@ -77,5 +74,4 @@ jobs:
           with:
             resourceGroupName: ${{ secrets.AZURE_RG_NAME }}
             template: ./infra/main.bicep
-            parameters: publisherEmailAddress=${{ secrets.PUBLISHER_EMAIL }} publisherName=${{ secrets.PUBLISHER_NAME }}
             failOnStdErr: false
