@@ -57,12 +57,34 @@ resource backendApi 'Microsoft.App/containerApps@2023-11-02-preview' = {
           identity: 'system'
         }
       ]
+      secrets: [
+        {
+          name: 'app-insights-key'
+          keyVaultUrl: 'https://${keyVault.name}.vault.azure.net/secrets/appinsightsinstrumentationkey'
+          identity: 'system'
+        }
+        {
+          name: 'app-insights-connection-string'
+          keyVaultUrl: 'https://${keyVault.name}.vault.azure.net/secrets/appinsightsconnectionstring'
+          identity: 'system'
+        }
+      ]
     }
     template: {
       containers: [
         {
           name: containerAppName
           image: 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
+          env: [
+            {
+              name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+              secretRef: 'app-insights-key'
+            }
+            {
+              name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+              secretRef: 'app-insights-connection-string'
+            }
+          ]
           resources: {
             cpu: json('0.5')
             memory: '1.0Gi'
