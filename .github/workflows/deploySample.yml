@@ -32,13 +32,7 @@ jobs:
           id: getacrname
           run: |
             acrName=$(az acr list --resource-group ${{secrets.AZURE_RG_NAME}} --query "[0].name" -o tsv)
-            echo "::set-output name=acrName::$acrName"
-        
-            - name: Get ACR name
-            id: getacrname
-            run: |
-              acrName=$(az acr list --resource-group ${{ secrets.AZURE_RG_NAME }} --query "[0].name" -o tsv)
-              echo "::set-output name=acrName::$acrName"
+            echo "acrName=$acrName" >> $GITHUB_OUTPUT  
           
         - name: Get ACR Credentials
           id: getacrcreds
@@ -46,9 +40,9 @@ jobs:
             loginServer=$(az acr list --resource-group ${{ secrets.AZURE_RG_NAME }} --query "[0].loginServer" -o tsv)
             loginName=$(az acr credential show -n ${{ steps.getacrname.outputs.acrName }} --resource-group ${{ secrets.AZURE_RG_NAME }} --query username -o tsv)
             password=$(az acr credential show -n ${{ steps.getacrname.outputs.acrName }} --resource-group ${{ secrets.AZURE_RG_NAME }} --query "passwords[0].value" -o tsv)
-            echo "::set-output name=loginServer::$loginServer"
-            echo "::set-output name=loginName::$loginName"
-            echo "::set-output name=password::$password"
+            echo "loginServer=$loginServer" >> $GITHUB_OUTPUT
+            echo "loginName=$loginName" >> $GITHUB_OUTPUT
+            echo "password=$password" >> $GITHUB_OUTPUT
 
         - name: 'Build and Push API Image to ACR'
           uses: azure/docker-login@v1
@@ -84,7 +78,7 @@ jobs:
           id: getacrserver
           run: |
             loginServer=$(az acr list --resource-group ${{ secrets.AZURE_RG_NAME }} --query "[0].loginServer" -o tsv)
-            echo "::set-output name=loginServer::$loginServer"
+            echo "loginServer=$loginServer" >> $GITHUB_OUTPUT
         
         - uses: azure/arm-deploy@v1
           name: Run preflight validation
@@ -111,7 +105,7 @@ jobs:
           id: getacrserver
           run: |
             loginServer=$(az acr list --resource-group ${{ secrets.AZURE_RG_NAME }} --query "[0].loginServer" -o tsv)
-            echo "::set-output name=loginServer::$loginServer"
+            echo "loginServer=$loginServer" >> $GITHUB_OUTPUT
 
         - uses: Azure/cli@v1
           name: Run what-if
@@ -137,7 +131,7 @@ jobs:
           id: getacrserver
           run: |
             loginServer=$(az acr list --resource-group ${{ secrets.AZURE_RG_NAME }} --query "[0].loginServer" -o tsv)
-            echo "::set-output name=loginServer::$loginServer"
+            echo "loginServer=$loginServer" >> $GITHUB_OUTPUT
           
         - name: Deploy Bicep File
           uses: azure/arm-deploy@v1
