@@ -78,7 +78,6 @@ module backendApi 'apps/backend-api/backendApi.bicep' = {
   params: {
     containerAppEnvName: env.outputs.containerAppEnvName
     containerRegistryName: containerRegistry.outputs.name
-    appInsightsName: appInsights.outputs.name
     keyVaultName: keyVault.outputs.name
     location: location
     tags: tags

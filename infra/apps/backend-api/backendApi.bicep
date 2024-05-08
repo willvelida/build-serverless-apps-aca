@@ -7,9 +7,6 @@ param containerAppEnvName string
 @description('The name of the Container Registry that this Container App pull images')
 param containerRegistryName string
 
-@description('The Application Insights workspace that this Container App will send logs to')
-param appInsightsName string
-
 @description('The name of the Key Vault that this Container App will pull secrets from')
 param keyVaultName string
 
@@ -26,10 +23,6 @@ resource env 'Microsoft.App/managedEnvironments@2023-11-02-preview' existing = {
 
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-11-01-preview' existing = {
   name: containerRegistryName
-}
-
-resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = {
-  name: appInsightsName
 }
 
 resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
@@ -61,18 +54,6 @@ resource backendApi 'Microsoft.App/containerApps@2023-11-02-preview' = {
         {
           server: containerRegistry.properties.loginServer
           username: containerRegistry.listCredentials().username
-          identity: 'system'
-        }
-      ]
-      secrets: [
-        {
-          name: 'app-insights-instrumentation-key'
-          keyVaultUrl: 'https://${keyVault.name}.vault.azure.net/secrets/appinsightsinstrumentationkey'
-          identity: 'system'
-        }
-        {
-          name: 'app-insights-connection-string'
-          keyVaultUrl: 'https://${keyVault.name}.vault.azure.net/secrets/appinsightsconnectionstring'
           identity: 'system'
         }
       ]
