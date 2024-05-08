@@ -16,6 +16,9 @@ param containerAppEnvName string = 'env-tm-${appSuffix}'
 @description('The name of the Container Registry')
 param containerRegistryName string = 'acrtm${appSuffix}'
 
+@description('The name of the Key Vault')
+param keyVaultName string = 'kv-tm-${appSuffix}'
+
 var tags = {
   Environment: 'Prod'
   Application: 'Task-Manager'
@@ -36,6 +39,7 @@ module appInsights 'core/monitor/appInsights.bicep' = {
     appInsightsName: appInsightsName 
     location: location
     logAnalyticsName: logAnalytics.outputs.name
+    keyVaultName: keyVault.outputs.name
     tags: tags
   }
 }
@@ -44,6 +48,15 @@ module containerRegistry 'core/host/containerRegistry.bicep' = {
   name: 'acr'
   params: {
     containerRegistryName: containerRegistryName
+    location: location
+    tags: tags
+  }
+}
+
+module keyVault 'core/security/keyVault.bicep' = {
+  name: 'kv'
+  params: {
+    keyVaultName: keyVaultName
     location: location
     tags: tags
   }
@@ -65,6 +78,8 @@ module backendApi 'apps/backend-api/backendApi.bicep' = {
   params: {
     containerAppEnvName: env.outputs.containerAppEnvName
     containerRegistryName: containerRegistry.outputs.name
+    appInsightsName: appInsights.outputs.name
+    keyVaultName: keyVault.outputs.name
     location: location
     tags: tags
   }

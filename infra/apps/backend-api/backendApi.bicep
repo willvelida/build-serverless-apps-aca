@@ -7,11 +7,18 @@ param containerAppEnvName string
 @description('The name of the Container Registry that this Container App pull images')
 param containerRegistryName string
 
+@description('The Application Insights workspace that this Container App will send logs to')
+param appInsightsName string
+
+@description('The name of the Key Vault that this Container App will pull secrets from')
+param keyVaultName string
+
 @description('The tags that will be applied to the Backend API')
 param tags object
 
 var containerAppName = 'tasksmanager-backend-api'
 var acrPullRoleId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')
+var keyVaultSecretUserRoleId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '4633458b-17de-408a-b874-0445c86b69e6')
 
 resource env 'Microsoft.App/managedEnvironments@2023-11-02-preview' existing = {
   name: containerAppEnvName
@@ -19,6 +26,14 @@ resource env 'Microsoft.App/managedEnvironments@2023-11-02-preview' existing = {
 
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-11-01-preview' existing = {
   name: containerRegistryName
+}
+
+resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = {
+  name: appInsightsName
+}
+
+resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
+  name: keyVaultName
 }
 
 resource backendApi 'Microsoft.App/containerApps@2023-11-02-preview' = {
@@ -49,12 +64,34 @@ resource backendApi 'Microsoft.App/containerApps@2023-11-02-preview' = {
           identity: 'system'
         }
       ]
+      secrets: [
+        {
+          name: 'app-insights-instrumentation-key'
+          keyVaultUrl: 'https://${keyVault.name}.vault.azure.net/secrets/appinsightsinstrumentationkey'
+          identity: 'system'
+        }
+        {
+          name: 'app-insights-connection-string'
+          keyVaultUrl: 'https://${keyVault.name}.vault.azure.net/secrets/appinsightsconnectionstring'
+          identity: 'system'
+        }
+      ]
     }
     template: {
       containers: [
         {
           name: containerAppName
           image: 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
+          env: [
+            {
+              name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+              secretRef: 'app-insights-key'
+            }
+            {
+              name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+              secretRef: 'app-insights-connection-string'
+            }
+          ]
           resources: {
             cpu: json('0.5')
             memory: '1.0Gi'
@@ -88,6 +125,16 @@ resource acrPullRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   properties: {
     principalId: backendApi.identity.principalId
     roleDefinitionId: acrPullRoleId
+    principalType: 'ServicePrincipal'
+  }
+}
+
+resource keyVaultSecretUserRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(keyVault.id,backendApi. id, keyVaultSecretUserRoleId)
+  scope: keyVault
+  properties: {
+    principalId: backendApi.identity.principalId
+    roleDefinitionId: keyVaultSecretUserRoleId
     principalType: 'ServicePrincipal'
   }
 }
