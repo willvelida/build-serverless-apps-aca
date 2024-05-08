@@ -63,16 +63,6 @@ resource backendApi 'Microsoft.App/containerApps@2023-11-02-preview' = {
         {
           name: containerAppName
           image: 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
-          env: [
-            {
-              name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-              secretRef: 'app-insights-key'
-            }
-            {
-              name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-              secretRef: 'app-insights-connection-string'
-            }
-          ]
           resources: {
             cpu: json('0.5')
             memory: '1.0Gi'
