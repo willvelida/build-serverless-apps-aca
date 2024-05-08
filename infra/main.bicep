@@ -19,6 +19,9 @@ param containerRegistryName string = 'acrtm${appSuffix}'
 @description('The name of the Key Vault')
 param keyVaultName string = 'kv-tm-${appSuffix}'
 
+@description('The container image used by the Backend API')
+param backendApiImage string
+
 var tags = {
   Environment: 'Prod'
   Application: 'Task-Manager'
@@ -78,6 +81,7 @@ module backendApi 'apps/backend-api/backendApi.bicep' = {
   params: {
     containerAppEnvName: env.outputs.containerAppEnvName
     containerRegistryName: containerRegistry.outputs.name
+    imageName: backendApiImage
     keyVaultName: keyVault.outputs.name
     location: location
     tags: tags

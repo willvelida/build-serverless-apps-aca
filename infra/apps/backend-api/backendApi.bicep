@@ -10,6 +10,9 @@ param containerRegistryName string
 @description('The name of the Key Vault that this Container App will pull secrets from')
 param keyVaultName string
 
+@description('The container image that this Backend API will use')
+param imageName string
+
 @description('The tags that will be applied to the Backend API')
 param tags object
 
@@ -74,7 +77,7 @@ resource backendApi 'Microsoft.App/containerApps@2023-11-02-preview' = {
       containers: [
         {
           name: containerAppName
-          image: 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
+          image: imageName
           env: [
             {
               name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
