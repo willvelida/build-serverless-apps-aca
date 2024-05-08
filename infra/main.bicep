@@ -59,3 +59,12 @@ module env 'core/host/containerAppEnvironment.bicep' = {
     tags: tags
   }
 }
+
+module backendApi 'apps/backend-api/backendApi.bicep' = {
+  name: 'backend-api'
+  params: {
+    containerAppEnvName: env.outputs.containerAppEnvName
+    location: location
+    tags: tags
+  }
+}
