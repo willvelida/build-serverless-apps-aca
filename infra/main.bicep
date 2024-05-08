@@ -87,3 +87,12 @@ module backendApi 'apps/backend-api/backendApi.bicep' = {
     tags: tags
   }
 }
+
+module frontEnd 'apps/frontend/frontend.bicep' = {
+  name: 'frontend'
+  params: {
+    containerAppEnvName: env.outputs.containerAppEnvName
+    location: location
+    tags: tags
+  }
+}
