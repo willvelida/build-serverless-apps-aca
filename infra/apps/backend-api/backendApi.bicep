@@ -45,14 +45,6 @@ resource backendApi 'Microsoft.App/containerApps@2023-11-02-preview' = {
         targetPort: 80
         transport: 'http'
       }
-      dapr: {
-        appId: containerAppName
-        enableApiLogging: true
-        enabled: true
-        appProtocol: 'http'
-        appPort: 80
-        logLevel: 'info'
-      }
       registries: [
         {
           server: containerRegistry.properties.loginServer
