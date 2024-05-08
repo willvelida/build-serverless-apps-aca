@@ -14,7 +14,7 @@ resource env 'Microsoft.App/managedEnvironments@2023-11-02-preview' existing = {
 }
 
 resource frontend 'Microsoft.App/containerApps@2023-11-02-preview' = {
-  name: containerAppEnvName
+  name: containerAppName
   location: location
   tags: tags
   properties: {
