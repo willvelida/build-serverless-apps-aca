@@ -1,0 +1,49 @@
+﻿@page "/tasks/{Email}"
+@using TaskManager.Web.Models
+@using TaskManager.Web.Services
+@inject ITasksBackendClient _tasksBackendClient;
+
+<h1>Tasks for: @Email</h1>
+
+@if (TaskModelList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Due Date</th>
+                <th>Assigned To</th>
+                <th>Completed</th>
+                <th>Overdue</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var task in TaskModelList)
+            {
+                <tr>
+                    <td>@task.TaskName</td>
+                    <td>@task.TaskDueDate.ToString("dd-MM-yyyy")</td>
+                    <td>@task.TaskAssignedTo</td>
+                    <td><input type="checkbox" checked="@task.IsCompleted" disabled/></td>
+                    <td><input type="checkbox" checked="@task.IsOverDue" disabled /></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter]
+    public string Email { get; set; }
+
+    private List<TaskModel> TaskModelList { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        TaskModelList = await _tasksBackendClient.GetTasksCreatedBy(Email);
+    }
+}

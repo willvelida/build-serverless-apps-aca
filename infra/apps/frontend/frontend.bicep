@@ -10,6 +10,12 @@ param containerRegistryName string
 @description('The name of the Key Vault that this Container App will pull secrets from')
 param keyVaultName string
 
+@description('The container image that this Frontend will use')
+param imageName string
+
+@description('The Backend API FQDN that this Frontend will communicate with')
+param backendFqdn string
+
 @description('The tags that will be applied to the Frontend App')
 param tags object
 
@@ -39,15 +45,48 @@ resource frontend 'Microsoft.App/containerApps@2023-11-02-preview' = {
       activeRevisionsMode: 'Multiple'
       ingress: {
         external: true
-        targetPort: 80
+        targetPort: 8080
         transport: 'http'
       }
+      registries: [
+        {
+          server: containerRegistry.properties.loginServer
+          username: containerRegistry.listCredentials().username
+          identity: 'system'
+        }
+      ]
+      secrets: [
+        {
+          name: 'app-insights-key'
+          keyVaultUrl: 'https://${keyVault.name}.vault.azure.net/secrets/appinsightsinstrumentationkey'
+          identity: 'system'
+        }
+        {
+          name: 'app-insights-connection-string'
+          keyVaultUrl: 'https://${keyVault.name}.vault.azure.net/secrets/appinsightsconnectionstring'
+          identity: 'system'
+        }
+      ]
     }
     template: {
       containers: [
         {
           name: containerAppName
-          image: 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
+          image: imageName
+          env: [
+            {
+              name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+              secretRef: 'app-insights-key'
+            }
+            {
+              name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+              secretRef: 'app-insights-connection-string'
+            }
+            {
+              name: 'TasksApi'
+              value: 'https://${backendFqdn}'
+            }
+          ]
           resources: {
             cpu: json('0.5')
             memory: '1.0Gi'

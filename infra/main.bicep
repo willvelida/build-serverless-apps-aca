@@ -22,6 +22,9 @@ param keyVaultName string = 'kv-tm-${appSuffix}'
 @description('The container image used by the Backend API')
 param backendApiImage string
 
+@description('The container image used by the Frontend UI')
+param frontendUIImage string
+
 var tags = {
   Environment: 'Prod'
   Application: 'Task-Manager'
@@ -94,6 +97,8 @@ module frontEnd 'apps/frontend/frontend.bicep' = {
     containerAppEnvName: env.outputs.containerAppEnvName
     containerRegistryName: containerRegistry.outputs.name
     keyVaultName: keyVault.outputs.name
+    imageName: frontendUIImage
+    backendFqdn: backendApi.outputs.fqdn
     location: location
     tags: tags
   }
