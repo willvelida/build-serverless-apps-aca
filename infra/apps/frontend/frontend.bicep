@@ -45,7 +45,7 @@ resource frontend 'Microsoft.App/containerApps@2023-11-02-preview' = {
       activeRevisionsMode: 'Multiple'
       ingress: {
         external: true
-        targetPort: 8080
+        targetPort: 80
         transport: 'http'
       }
       registries: [
