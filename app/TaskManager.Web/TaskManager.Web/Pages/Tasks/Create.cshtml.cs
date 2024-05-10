@@ -1,3 +1,4 @@
+using Dapr.Client;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using TaskManager.Web.Pages.Tasks.Models;
@@ -6,10 +7,11 @@ namespace TaskManager.Web.Pages.Tasks
 {
     public class CreateModel : PageModel
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        public CreateModel(IHttpClientFactory httpClientFactory)
+        private readonly DaprClient _daprClient;
+
+        public CreateModel(DaprClient daprClient)
         {
-            _httpClientFactory = httpClientFactory;
+            _daprClient = daprClient;
         }
         public string? TasksCreatedBy { get; set; }
 
@@ -38,9 +40,7 @@ namespace TaskManager.Web.Pages.Tasks
                 {
                     TaskAdd.TaskCreatedBy = createdBy;
 
-                    // direct svc to svc http request
-                    var httpClient = _httpClientFactory.CreateClient("TasksApi");
-                    var result = await httpClient.PostAsJsonAsync("api/tasks/", TaskAdd);
+                    await _daprClient.InvokeMethodAsync(HttpMethod.Post, "taskmanager-backend-api", "api/tasks", TaskAdd);
                 }
             }
 

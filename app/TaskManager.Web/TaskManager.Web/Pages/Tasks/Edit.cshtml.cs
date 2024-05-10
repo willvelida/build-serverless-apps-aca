@@ -1,3 +1,4 @@
+using Dapr.Client;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using TaskManager.Web.Pages.Tasks.Models;
@@ -6,15 +7,15 @@ namespace TaskManager.Web.Pages.Tasks
 {
     public class EditModel : PageModel
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly DaprClient _daprClient;
 
         [BindProperty]
         public TaskUpdateModel? TaskUpdate { get; set; }
         public string? TasksCreatedBy { get; set; }
 
-        public EditModel(IHttpClientFactory httpClientFactory)
+        public EditModel(DaprClient daprClient)
         {
-            _httpClientFactory = httpClientFactory;
+            _daprClient = daprClient;
         }
 
         public async Task<IActionResult> OnGetAsync(Guid? id)
@@ -32,8 +33,7 @@ namespace TaskManager.Web.Pages.Tasks
             }
 
             // direct svc to svc http request
-            var httpClient = _httpClientFactory.CreateClient("TasksApi");
-            var Task = await httpClient.GetFromJsonAsync<TaskModel>($"api/tasks/{id}");
+            var Task = await _daprClient.InvokeMethodAsync<TaskModel>(HttpMethod.Get, "taskmanager-backend-api", $"api/tasks/{id}");
 
             if (Task == null)
             {
@@ -60,9 +60,7 @@ namespace TaskManager.Web.Pages.Tasks
 
             if (TaskUpdate != null)
             {
-                // direct svc to svc http request
-                var httpClient = _httpClientFactory.CreateClient("BackEndApiExternal");
-                var result = await httpClient.PutAsJsonAsync($"api/tasks/{TaskUpdate.TaskId}", TaskUpdate);
+                await _daprClient.InvokeMethodAsync<TaskUpdateModel>(HttpMethod.Put, "taskmanager-backend-api", $"api/tasks/{TaskUpdate.TaskId}", TaskUpdate);
             }
 
             return RedirectToPage("./Index");

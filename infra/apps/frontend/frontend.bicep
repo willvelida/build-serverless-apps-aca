@@ -48,6 +48,14 @@ resource frontend 'Microsoft.App/containerApps@2023-11-02-preview' = {
         targetPort: 80
         transport: 'http'
       }
+      dapr: {
+        enableApiLogging: true
+        enabled: true
+        appId: containerAppName
+        appProtocol: 'http'
+        logLevel: 'info'
+        appPort: 80
+      }
       registries: [
         {
           server: containerRegistry.properties.loginServer
