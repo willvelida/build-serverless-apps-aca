@@ -33,7 +33,7 @@ namespace TaskManager.Web.Pages.Tasks
             }
 
             // direct svc to svc http request
-            var Task = await _daprClient.InvokeMethodAsync<TaskModel>(HttpMethod.Get, "taskmanager-backend-api", $"api/tasks/{id}");
+            var Task = await _daprClient.InvokeMethodAsync<TaskModel>(HttpMethod.Get, "tasksmanager-backend-api", $"api/tasks/{id}");
 
             if (Task == null)
             {
@@ -60,7 +60,7 @@ namespace TaskManager.Web.Pages.Tasks
 
             if (TaskUpdate != null)
             {
-                await _daprClient.InvokeMethodAsync<TaskUpdateModel>(HttpMethod.Put, "taskmanager-backend-api", $"api/tasks/{TaskUpdate.TaskId}", TaskUpdate);
+                await _daprClient.InvokeMethodAsync<TaskUpdateModel>(HttpMethod.Put, "tasksmanager-backend-api", $"api/tasks/{TaskUpdate.TaskId}", TaskUpdate);
             }
 
             return RedirectToPage("./Index");

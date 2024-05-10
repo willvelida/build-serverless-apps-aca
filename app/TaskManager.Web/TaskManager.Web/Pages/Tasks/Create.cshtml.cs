@@ -40,7 +40,7 @@ namespace TaskManager.Web.Pages.Tasks
                 {
                     TaskAdd.TaskCreatedBy = createdBy;
 
-                    await _daprClient.InvokeMethodAsync(HttpMethod.Post, "taskmanager-backend-api", "api/tasks", TaskAdd);
+                    await _daprClient.InvokeMethodAsync(HttpMethod.Post, "tasksmanager-backend-api", "api/tasks", TaskAdd);
                 }
             }
 
