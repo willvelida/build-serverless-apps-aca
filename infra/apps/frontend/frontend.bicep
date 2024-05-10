@@ -83,6 +83,10 @@ resource frontend 'Microsoft.App/containerApps@2023-11-02-preview' = {
           image: imageName
           env: [
             {
+              name: 'ASPNETCORE_ENVIRONMENT'
+              value: 'Development'
+            }
+            {
               name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
               secretRef: 'app-insights-key'
             }
