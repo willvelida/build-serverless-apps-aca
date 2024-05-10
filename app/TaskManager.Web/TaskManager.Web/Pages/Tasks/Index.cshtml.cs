@@ -24,7 +24,7 @@ namespace TaskManager.Web.Pages.Tasks
 
             if (!String.IsNullOrEmpty(TasksCreatedBy))
             {
-                TasksList = await _daprClient.InvokeMethodAsync<List<TaskModel>>(HttpMethod.Get, "taskmanager-backend-api", $"api/tasks/?createdBy={TasksCreatedBy}");
+                TasksList = await _daprClient.InvokeMethodAsync<List<TaskModel>>(HttpMethod.Get, "tasksmanager-backend-api", $"api/tasks/?createdBy={TasksCreatedBy}");
                 return Page();
             }
             else
