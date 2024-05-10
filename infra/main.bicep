@@ -19,6 +19,9 @@ param containerRegistryName string = 'acrtm${appSuffix}'
 @description('The name of the Key Vault')
 param keyVaultName string = 'kv-tm-${appSuffix}'
 
+@description('The name of the Cosmos DB account')
+param cosmosDbAccountName string = 'cosmos-tm-${appSuffix}'
+
 @description('The container image used by the Backend API')
 param backendApiImage string
 
@@ -63,6 +66,14 @@ module keyVault 'core/security/keyVault.bicep' = {
   name: 'kv'
   params: {
     keyVaultName: keyVaultName
+    location: location
+    tags: tags
+  }
+}
+module cosmosDb 'core/database/cosmosDb.bicep' = {
+  name: 'cosmosdb'
+  params: {
+    cosmosAccountName: cosmosDbAccountName
     location: location
     tags: tags
   }
