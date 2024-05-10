@@ -1,16 +1,21 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using TaskManager.Web.Data;
-using TaskManager.Web.Services;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor();
-builder.Services.AddHttpClient("Tasks", client => client.BaseAddress = new Uri(builder.Configuration.GetValue<string>("TasksApi")));
-builder.Services.AddScoped<ITasksBackendClient, TasksBackendClient>();
-builder.Services.AddSingleton<WeatherForecastService>();
+
+builder.Services.AddHttpClient("TasksApi", httpClient =>
+{
+    var backendApiBaseUrlExternalHttp = builder.Configuration.GetValue<string>("TasksApi");
+
+    if (!string.IsNullOrEmpty(backendApiBaseUrlExternalHttp))
+    {
+        httpClient.BaseAddress = new Uri(backendApiBaseUrlExternalHttp);
+    }
+    else
+    {
+        throw new("TasksApi is not defined in App Settings.");
+    }
+});
 
 var app = builder.Build();
 
@@ -23,12 +28,12 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
 
 app.UseRouting();
 
-app.MapBlazorHub();
-app.MapFallbackToPage("/_Host");
+app.UseAuthorization();
+
+app.MapRazorPages();
 
 app.Run();
