@@ -35,13 +35,13 @@ namespace TaskManager.Web.Pages.Tasks
 
         public async Task<IActionResult> OnPostDeleteAsync(Guid id)
         {
-            await _daprClient.InvokeMethodAsync(HttpMethod.Delete, "taskmanager-backend-api", $"api/tasks/{id}");
+            await _daprClient.InvokeMethodAsync(HttpMethod.Delete, "tasksmanager-backend-api", $"api/tasks/{id}");
             return RedirectToPage();
         }
 
         public async Task<IActionResult> OnPostCompleteAsync(Guid id)
         {
-            await _daprClient.InvokeMethodAsync(HttpMethod.Put, "taskmanager-backend-api", $"api/tasks/{id}/markcomplete");
+            await _daprClient.InvokeMethodAsync(HttpMethod.Put, "tasksmanager-backend-api", $"api/tasks/{id}/markcomplete");
             return RedirectToPage();
         }
 
