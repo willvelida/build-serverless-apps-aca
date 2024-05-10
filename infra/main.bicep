@@ -90,6 +90,17 @@ module env 'core/host/containerAppEnvironment.bicep' = {
   }
 }
 
+module dapr 'core/host/daprComponents.bicep' = {
+  name: 'dapr'
+  params: {
+    backendApiName: backendApi.outputs.name 
+    containerAppEnvironment: env.outputs.containerAppEnvName
+    cosmosDbAccountName: cosmosDb.outputs.name
+    cosmosDbContainerName: cosmosDb.outputs.containerName
+    cosmosDbDatabaseName: cosmosDb.outputs.dbName
+  }
+}
+
 module backendApi 'apps/backend-api/backendApi.bicep' = {
   name: 'backend-api'
   params: {
@@ -97,6 +108,9 @@ module backendApi 'apps/backend-api/backendApi.bicep' = {
     containerRegistryName: containerRegistry.outputs.name
     imageName: backendApiImage
     keyVaultName: keyVault.outputs.name
+    cosmosDbName: cosmosDb.outputs.name
+    cosmosDbCollection: cosmosDb.outputs.containerName
+    cosmosDbDatabase: cosmosDb.outputs.dbName
     location: location
     tags: tags
   }

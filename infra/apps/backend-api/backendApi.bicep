@@ -10,6 +10,15 @@ param containerRegistryName string
 @description('The name of the Key Vault that this Container App will pull secrets from')
 param keyVaultName string
 
+@description('The name of the Cosmos DB account that this Backend API uses as a state store')
+param cosmosDbName string
+
+@description('The name of the Cosmos DB database that this Backend API will use')
+param cosmosDbDatabase string
+
+@description('The name of the Cosmos DB collection that this Backend API will use')
+param cosmosDbCollection string
+
 @description('The container image that this Backend API will use')
 param imageName string
 
@@ -19,6 +28,7 @@ param tags object
 var containerAppName = 'tasksmanager-backend-api'
 var acrPullRoleId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')
 var keyVaultSecretUserRoleId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '4633458b-17de-408a-b874-0445c86b69e6')
+var cosmosDataRoleContributorIdGuid = '00000000-0000-0000-0000-000000000002'
 
 resource env 'Microsoft.App/managedEnvironments@2023-11-02-preview' existing = {
   name: containerAppEnvName
@@ -30,6 +40,20 @@ resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-11-01-pr
 
 resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
   name: keyVaultName
+}
+
+resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2024-02-15-preview' existing = {
+  name: cosmosDbName
+}
+
+resource cosmosDatabase 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2024-02-15-preview' existing = {
+  name: cosmosDbDatabase
+  parent: cosmosAccount
+}
+
+resource cosmosCollection 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-02-15-preview' existing = {
+  name: cosmosDbCollection
+  parent: cosmosDatabase
 }
 
 resource backendApi 'Microsoft.App/containerApps@2023-11-02-preview' = {
@@ -138,6 +162,19 @@ resource keyVaultSecretUserRoleAssignment 'Microsoft.Authorization/roleAssignmen
     principalType: 'ServicePrincipal'
   }
 }
+
+resource cosmosDbDataContributorRoleAssignment 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2024-02-15-preview' = {
+  name: guid(cosmosAccount.id, backendApi.id, cosmosDataRoleContributorIdGuid)
+  parent: cosmosAccount
+  properties: {
+    principalId: backendApi.identity.principalId
+    roleDefinitionId: resourceId('Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions', cosmosAccount.name, cosmosDataRoleContributorIdGuid)
+    scope: '${cosmosAccount.id}/dbs/${cosmosDatabase.name}/colls/${cosmosCollection.name}'
+  }
+}
+
+@description('The name of the Backend API')
+output name string = backendApi.name
 
 @description('The FQDN for the Backend API')
 output fqdn string = backendApi.properties.configuration.ingress.fqdn
