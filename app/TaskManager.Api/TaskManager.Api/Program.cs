@@ -3,7 +3,8 @@ using TaskManager.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton<ITasksManager, FakeTaskManager>();
+builder.Services.AddDaprClient();
+builder.Services.AddSingleton<ITasksManager, TasksStoreManager>();
 
 var app = builder.Build();
 
