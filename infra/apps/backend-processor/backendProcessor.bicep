@@ -117,7 +117,7 @@ resource backendProcessor 'Microsoft.App/containerApps@2024-03-01' = {
         }
       ]
       scale: {
-        maxReplicas: 0
+        maxReplicas: 1
         minReplicas: 5
         rules: [
           {
