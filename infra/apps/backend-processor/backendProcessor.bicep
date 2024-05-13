@@ -118,28 +118,7 @@ resource backendProcessor 'Microsoft.App/containerApps@2023-11-02-preview' = {
       ]
       scale: {
         maxReplicas: 1
-        minReplicas: 5
-        rules: [
-          {
-            name: 'topic-msg-length'
-            custom: {
-              type: 'azure-servicebus'
-              auth: [
-                {
-                  triggerParameter: 'connection'
-                  secretRef: 'svcbus-connstring'
-                }
-              ]
-              metadata: {
-                namespace: serviceBusName
-                subscriptionName: serviceBusSubscriptionName
-                topicName: serviceBusTopicName
-                messageCount: '10'
-                connectionFromEnv: 'svcbus-connstring'
-              }
-            }
-          }
-        ]
+        minReplicas: 1
       }
     }
   }
