@@ -172,7 +172,7 @@ jobs:
             deploymentName: ${{ github.run_number }}
             resourceGroupName: ${{ secrets.AZURE_RG_NAME }}           
             template: ./infra/main.bicep
-            parameters: backendApiImage=${{ steps.getacrserver.outputs.loginServer }}/tasksmanager-backend-api:${{ github.sha }} frontendUIImage=${{ steps.getacrserver.outputs.loginServer }}/tasksmanager-frontend-webapp:${{ github.sha }}
+            parameters: backendApiImage=${{ steps.getacrserver.outputs.loginServer }}/tasksmanager-backend-api:${{ github.sha }} frontendUIImage=${{ steps.getacrserver.outputs.loginServer }}/tasksmanager-frontend-webapp:${{ github.sha }} backendProcessorImage=${{ steps.getacrserver.outputs.loginServer }}/tasksmanager-backend-processor:${{ github.sha }}
             deploymentMode: Validate
   
     preview:
@@ -197,7 +197,7 @@ jobs:
           name: Run what-if
           with:
             inlineScript: |
-              az deployment group what-if --resource-group ${{ secrets.AZURE_RG_NAME }} --template-file ./infra/main.bicep --parameters backendApiImage=${{ steps.getacrserver.outputs.loginServer }}/tasksmanager-backend-api:${{ github.sha }} frontendUIImage=${{ steps.getacrserver.outputs.loginServer }}/tasksmanager-frontend-webapp:${{ github.sha }}
+              az deployment group what-if --resource-group ${{ secrets.AZURE_RG_NAME }} --template-file ./infra/main.bicep --parameters backendApiImage=${{ steps.getacrserver.outputs.loginServer }}/tasksmanager-backend-api:${{ github.sha }} frontendUIImage=${{ steps.getacrserver.outputs.loginServer }}/tasksmanager-frontend-webapp:${{ github.sha }} backendProcessorImage=${{ steps.getacrserver.outputs.loginServer }}/tasksmanager-backend-processor:${{ github.sha }}
 
   
     deploy:
@@ -224,5 +224,5 @@ jobs:
           with:
             resourceGroupName: ${{ secrets.AZURE_RG_NAME }}
             template: ./infra/main.bicep
-            parameters: backendApiImage=${{ steps.getacrserver.outputs.loginServer }}/tasksmanager-backend-api:${{ github.sha }} frontendUIImage=${{ steps.getacrserver.outputs.loginServer }}/tasksmanager-frontend-webapp:${{ github.sha }}
+            parameters: backendApiImage=${{ steps.getacrserver.outputs.loginServer }}/tasksmanager-backend-api:${{ github.sha }} frontendUIImage=${{ steps.getacrserver.outputs.loginServer }}/tasksmanager-frontend-webapp:${{ github.sha }} backendProcessorImage=${{ steps.getacrserver.outputs.loginServer }}/tasksmanager-backend-processor:${{ github.sha }}
             failOnStdErr: false

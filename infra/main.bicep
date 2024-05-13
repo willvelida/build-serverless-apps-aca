@@ -31,6 +31,9 @@ param backendApiImage string
 @description('The container image used by the Frontend UI')
 param frontendUIImage string
 
+@description('The container image used by the Backend Processor')
+param backendProcessorImage string
+
 var tags = {
   Environment: 'Prod'
   Application: 'Task-Manager'
@@ -136,6 +139,8 @@ module backendProcessor 'apps/backend-processor/backendProcessor.bicep' = {
   params: {
     containerAppEnvName: env.outputs.containerAppEnvName
     containerRegistryName: containerRegistry.outputs.name
+    imageName: backendProcessorImage
+    keyVaultName: keyVault.outputs.name
     location: location
     tags: tags
   }
