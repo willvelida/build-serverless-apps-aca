@@ -135,6 +135,7 @@ module backendProcessor 'apps/backend-processor/backendProcessor.bicep' = {
   name: 'backend-processor'
   params: {
     containerAppEnvName: env.outputs.containerAppEnvName
+    containerRegistryName: containerRegistry.outputs.name
     location: location
     tags: tags
   }
