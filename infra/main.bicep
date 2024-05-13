@@ -31,9 +31,6 @@ param backendApiImage string
 @description('The container image used by the Frontend UI')
 param frontendUIImage string
 
-@description('The container image used by the Backend Processor')
-param backendProcessorImage string
-
 var tags = {
   Environment: 'Prod'
   Application: 'Task-Manager'
