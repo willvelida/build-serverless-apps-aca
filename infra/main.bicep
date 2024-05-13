@@ -22,11 +22,17 @@ param keyVaultName string = 'kv-tm-${appSuffix}'
 @description('The name of the Cosmos DB account')
 param cosmosDbAccountName string = 'cosmos-tm-${appSuffix}'
 
+@description('The name of the Service Bus namespace')
+param serviceBusName string = 'sb-tm-${appSuffix}'
+
 @description('The container image used by the Backend API')
 param backendApiImage string
 
 @description('The container image used by the Frontend UI')
 param frontendUIImage string
+
+@description('The container image used by the Backend Processor')
+param backendProcessorImage string
 
 var tags = {
   Environment: 'Prod'
@@ -79,6 +85,16 @@ module cosmosDb 'core/database/cosmosDb.bicep' = {
   }
 }
 
+module serviceBus 'core/messaging/serviceBus.bicep' = {
+  name: 'service-bus'
+  params: {
+    keyVaultName: keyVault.outputs.name
+    location: location
+    serviceBusName: serviceBusName
+    tags: tags
+  }
+}
+
 module env 'core/host/containerAppEnvironment.bicep' = {
   name: 'env'
   params: {
@@ -94,10 +110,12 @@ module dapr 'core/host/daprComponents.bicep' = {
   name: 'dapr'
   params: {
     backendApiName: backendApi.outputs.name 
+    backendProcessorName: backendProcessor.outputs.name
     containerAppEnvironment: env.outputs.containerAppEnvName
     cosmosDbAccountName: cosmosDb.outputs.name
     cosmosDbContainerName: cosmosDb.outputs.containerName
     cosmosDbDatabaseName: cosmosDb.outputs.dbName
+    serviceBusName: serviceBus.outputs.name
   }
 }
 
@@ -112,6 +130,21 @@ module backendApi 'apps/backend-api/backendApi.bicep' = {
     cosmosDbCollection: cosmosDb.outputs.containerName
     cosmosDbDatabase: cosmosDb.outputs.dbName
     location: location
+    tags: tags
+  }
+}
+
+module backendProcessor 'apps/backend-processor/backendProcessor.bicep' = {
+  name: 'backend-processor'
+  params: {
+    containerAppEnvName: env.outputs.containerAppEnvName
+    containerRegistryName: containerRegistry.outputs.name
+    imageName: backendProcessorImage
+    keyVaultName: keyVault.outputs.name
+    location: location
+    serviceBusName: serviceBus.outputs.name
+    serviceBusSubscriptionName: serviceBus.outputs.subscriptionName
+    serviceBusTopicName: serviceBus.outputs.topicName
     tags: tags
   }
 }

@@ -10,8 +10,14 @@ param cosmosDbDatabaseName string
 @description('The name of the Cosmos DB container')
 param cosmosDbContainerName string
 
+@description('The name of the Service Bus namespace')
+param serviceBusName string
+
 @description('The name of the Backend API service')
 param backendApiName string
+
+@description('The name of the Backend processor service')
+param backendProcessorName string
 
 resource env 'Microsoft.App/managedEnvironments@2024-03-01' existing = {
   name: containerAppEnvironment
@@ -46,6 +52,32 @@ resource stateStore 'Microsoft.App/managedEnvironments/daprComponents@2024-03-01
     ]
     scopes: [
       backendApiName
+    ]
+  }
+}
+
+resource pubSub 'Microsoft.App/managedEnvironments/daprComponents@2024-03-01' = {
+  name: 'dapr-pubsub-servicebus'
+  parent: env
+  properties: {
+    componentType: 'pubsub.azure.servicebus'
+    version: 'v1'
+    secrets: [
+      
+    ]
+    metadata: [
+      {
+        name: 'namespaceName'
+        value: '${serviceBusName}.servicebus.windows.net'
+      }
+      {
+        name: 'consumerID'
+        value: backendProcessorName
+      }
+    ]
+    scopes: [
+      backendApiName
+      backendProcessorName
     ]
   }
 }
