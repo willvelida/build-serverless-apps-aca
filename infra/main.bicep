@@ -139,12 +139,7 @@ module backendProcessor 'apps/backend-processor/backendProcessor.bicep' = {
   params: {
     containerAppEnvName: env.outputs.containerAppEnvName
     containerRegistryName: containerRegistry.outputs.name
-    imageName: backendProcessorImage
-    keyVaultName: keyVault.outputs.name
     location: location
-    serviceBusName: serviceBus.outputs.name
-    serviceBusSubscriptionName: serviceBus.outputs.subscriptionName
-    serviceBusTopicName: serviceBus.outputs.topicName
     tags: tags
   }
 }
