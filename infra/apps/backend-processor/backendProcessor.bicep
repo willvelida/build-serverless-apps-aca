@@ -46,7 +46,7 @@ resource serviceBus 'Microsoft.ServiceBus/namespaces@2022-10-01-preview' existin
   name: serviceBusName
 }
 
-resource backendProcessor 'Microsoft.App/containerApps@2024-03-01' = {
+resource backendProcessor 'Microsoft.App/containerApps@2023-11-02-preview' = {
   name: containerAppName
   location: location
   tags: tags
